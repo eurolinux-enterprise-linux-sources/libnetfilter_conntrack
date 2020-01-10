@@ -1,6 +1,6 @@
 Name:           libnetfilter_conntrack
-Version:        1.0.4
-Release:        2%{?dist}
+Version:        1.0.6
+Release:        1%{?dist}
 Summary:        Netfilter conntrack userspace library
 Group:          System Environment/Libraries
 License:        GPLv2+
@@ -10,15 +10,18 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  libnfnetlink-devel >= 1.0.1, pkgconfig, kernel-headers, libmnl-devel >= 1.0.3
 
+Patch1:         libnetfilter_conntrack-break.patch
+Patch2:         libnetfilter_conntrack-getobjopt_is_nat.patch
+
 %description
-libnetfilter_conntrack is a userspace library providing a programming 
+libnetfilter_conntrack is a userspace library providing a programming
 interface (API) to the in-kernel connection tracking state table.
 
 %package        devel
 Summary:        Netfilter conntrack userspace library
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}, libnfnetlink-devel >= 1.0.1
-Requires:	kernel-headers
+Requires:       kernel-headers
 
 %description    devel
 libnetfilter_conntrack is a userspace library providing a programming
@@ -27,13 +30,15 @@ interface (API) to the in-kernel connection tracking state table.
 %prep
 %setup -q
 
+%patch1 -p1
+%patch2 -p1
+
 # (valid for 1.0.3, may break newer releases)
 # Remove outdated files that confuse various helper scripts.
 rm compile config.guess config.sub depcomp install-sh ltmain.sh missing
 
 %build
 %configure --disable-static --disable-rpath
-
 make %{?_smp_mflags}
 
 %install
@@ -60,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/libnetfilter_conntrack/*.h
 
 %changelog
+* Fri Mar 03 2017 Paul Wouters <pwouters@redhat.com> - 1.0.6-1
+- Resolves: rhbz#1426412 libnetfilter_conntrack does not support Ipv6 NAT
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 1.0.4-2
 - Mass rebuild 2014-01-24
 

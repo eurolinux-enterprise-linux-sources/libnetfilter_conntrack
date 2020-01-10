@@ -1,0 +1,23 @@
+commit f68f7b30f504c556581bc41159c1b53278b3fc8e
+Author: Ken-ichirou MATSUZAWA <chamaken@gmail.com>
+Date:   Tue Feb 28 13:55:26 2017 +0900
+
+    conntrack: fix missing break in setobjopt_undo_dnat()
+    
+    Otherwise we fall into the IPv6 case.
+    
+    Signed-off-by Ken-ichirou MATSUZAWA <chamas@h4.dion.ne.jp>
+    Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+
+diff --git a/src/conntrack/objopt.c b/src/conntrack/objopt.c
+index 119a83a..fb43d6c 100644
+--- a/src/conntrack/objopt.c
++++ b/src/conntrack/objopt.c
+@@ -81,6 +81,7 @@ static void setobjopt_undo_dnat(struct nf_conntrack *ct)
+ 		ct->dnat.max_ip.v4 = ct->dnat.min_ip.v4;
+ 		ct->repl.src.v4 = ct->head.orig.dst.v4;
+ 		set_bit(ATTR_DNAT_IPV4, ct->head.set);
++		break;
+ 	case AF_INET6:
+ 		memcpy(&ct->dnat.min_ip.v6, &ct->repl.src.v6,
+ 		       sizeof(struct in6_addr));

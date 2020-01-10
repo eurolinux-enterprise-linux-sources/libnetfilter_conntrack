@@ -1,0 +1,44 @@
+commit 79dac5ac16ffe102b120c00600fb97653fe49c4b
+Author: Ken-ichirou MATSUZAWA <chamas@h4.dion.ne.jp>
+Date:   Tue Feb 28 11:34:29 2017 +0900
+
+    conntrack: revert getobjopt_is_nat() condition
+    
+    getobjopt_is_nat() used to work even if no status bits where set, by
+    checking if addresses don't match. Restore this behaviour for
+    compatibility reasons.
+    
+    Fixes: 73ad642ba462 ("src: add support for IPv6 NAT")
+    Signed-off-by: Ken-ichirou MATSUZAWA <chamas@h4.dion.ne.jp>
+    Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+
+diff --git a/src/conntrack/objopt.c b/src/conntrack/objopt.c
+index fb43d6c..1581480 100644
+--- a/src/conntrack/objopt.c
++++ b/src/conntrack/objopt.c
+@@ -144,10 +144,8 @@ int __setobjopt(struct nf_conntrack *ct, unsigned int option)
+ 
+ static int getobjopt_is_snat(const struct nf_conntrack *ct)
+ {
+-	if (!(test_bit(ATTR_STATUS, ct->head.set)))
+-		return 0;
+-
+-	if (!(ct->status & IPS_SRC_NAT_DONE))
++	if (test_bit(ATTR_STATUS, ct->head.set) &&
++	    !(ct->status & IPS_SRC_NAT_DONE))
+ 		return 0;
+ 
+ 	switch (ct->head.orig.l3protonum) {
+@@ -166,10 +164,8 @@ static int getobjopt_is_snat(const struct nf_conntrack *ct)
+ 
+ static int getobjopt_is_dnat(const struct nf_conntrack *ct)
+ {
+-	if (!(test_bit(ATTR_STATUS, ct->head.set)))
+-		return 0;
+-
+-	if (!(ct->status & IPS_DST_NAT_DONE))
++	if (test_bit(ATTR_STATUS, ct->head.set) &&
++	    !(ct->status & IPS_DST_NAT_DONE))
+ 		return 0;
+ 
+ 	switch (ct->head.orig.l3protonum) {
