@@ -1,6 +1,6 @@
 Name:           libnetfilter_conntrack
-Version:        1.0.3
-Release:        1%{?dist}
+Version:        1.0.4
+Release:        2%{?dist}
 Summary:        Netfilter conntrack userspace library
 Group:          System Environment/Libraries
 License:        GPLv2+
@@ -60,6 +60,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/libnetfilter_conntrack/*.h
 
 %changelog
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 1.0.4-2
+- Mass rebuild 2014-01-24
+
+* Wed Jan 15 2014 Thomas Woerner <twoerner@redhat.com> - 1.0.4-1
+- rebase to 1.0.4 (RHBZ#1053702)
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 1.0.3-2
+- Mass rebuild 2013-12-27
+
 * Sun Mar 24 2013 Paul P. Komkoff Jr <i@stingr.net> - 1.0.3-1
 - new upstream version
 
